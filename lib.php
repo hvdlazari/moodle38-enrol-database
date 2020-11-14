@@ -777,6 +777,7 @@ class enrol_database_plugin extends enrol_plugin {
         }
         if ($createcourses) {
             require_once("$CFG->dirroot/course/lib.php");
+            require_once($CFG->dirroot."/enrol/database/classes/processor.php");
 
             $templatecourse = $this->get_config('templatecourse');
 
@@ -834,7 +835,10 @@ class enrol_database_plugin extends enrol_plugin {
                     $trace->output("can not insert new course, duplicate idnumber detected: ".$newcourse->idnumber, 1);
                     continue;
                 }
-                $c = create_course($newcourse);
+
+                $processor = new enrol_database_processor($newcourse, $templatecourse);
+                $c = $processor->execute();
+
                 $trace->output("creating course: $c->id, $c->fullname, $c->shortname, $c->idnumber, $c->category", 1);
             }
 
